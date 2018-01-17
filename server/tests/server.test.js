@@ -37,7 +37,7 @@ describe('POST /todos', () => {
                 if(err){
                     return done(err);
                 }
-
+                //querying the db to check if todo has been added
                 Todo.find({text}).then((todos) => {
                     expect(todos.length).toBe(1);
                     expect(todos[0].text).toBe(text);
@@ -55,7 +55,7 @@ describe('POST /todos', () => {
                 if(err){
                     return done();
                 }
-
+                //querying the db to check if a todo was created with a empty body
                 Todo.find().then((todos) => {
                     expect(todos.length).toBe(2);
                     done();
@@ -100,6 +100,43 @@ describe('GET /todos/:id', () => {
     it('should return 404 for non-object ids', (done) => {
         request(app)
             .get('/todos/123')
+            .expect(404)
+            .end(done);
+    });
+});
+
+describe('DELETE todos/:id', () => {
+    it('should remove a todo', (done) => {
+        var hexId = todos[0]._id.toHexString();
+        request(app)
+            .delete(`/todos/${hexId}`)
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo._id).toBe(hexId);
+            })
+            .end((err, res) => {
+                if(err){
+                    return done(err);
+                }
+
+                //querying the database to make sure the todo has been deleted
+                Todo.findById(hexId).then((todo) => {
+                    expect(todo).toBeNull();
+                    done();
+                }).catch((e) => done(e));
+            })
+    });
+
+    it('should return 404 if todo not found', (done) => {
+        request(app)
+            .delete('/todos/5a5f8e2ca9ae9c2a8d5c7d80')
+            .expect(404)
+            .end(done);
+    });
+
+    it('should return 404 for non-object ids', (done) => {
+        request(app)
+            .delete('/todos/232423')
             .expect(404)
             .end(done);
     });
