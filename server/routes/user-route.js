@@ -1,6 +1,7 @@
 const express = require('express');
 const userRouter = express.Router();
 const _ = require('lodash');
+var {authenticate} = require('./../middleware/authenticate');
 
 const {User} = require('./../models/user');
 
@@ -16,6 +17,10 @@ userRouter.post('/', (req, res) => {
     }).catch((e) => {
         res.status(400).send(e);
     });
+});
+
+userRouter.get('/me', authenticate, (req, res) => {
+    res.send(req.user);
 });
 
 
