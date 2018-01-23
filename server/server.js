@@ -3,6 +3,7 @@ require('./config/config');
 const express = require('express');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
+const {userRouter} = require('./routes/user-route');
 
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
@@ -13,6 +14,8 @@ var app = express();
 const port = process.env.PORT;
 
 app.use(bodyParser.json());
+
+app.use('/users', userRouter);
 
 app.post('/todos', (req, res) => {
     var todo = new Todo({
@@ -89,6 +92,8 @@ app.patch('/todos/:id', (req, res) => {
         res.status(400).send();
     })
 });
+
+
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
