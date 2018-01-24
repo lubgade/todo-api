@@ -12,7 +12,7 @@ userRouter.post('/', (req, res) => {
     user.save().then(() => {
         return user.generateAuthToken();
     }).then((token) => {
-        console.log(token);
+        //console.log(token);
         res.header('x-auth', token).send(user);
     }).catch((e) => {
         res.status(400).send(e);
